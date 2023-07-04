@@ -1,0 +1,48 @@
+use proiectdb;
+db.createCollection("imprumut");
+
+db.imprumut.insertOne({nume:"Nae", prenume:"Razvan", nr_tel: 0720930442, data_nasterii: new Date("May 20, 2002"), data_imprumut: new Date("May 26, 2023"), data_restituire: new Date("Jun 02, 2023"), carti: ["Furtuna", "Hamlet"], biblioteca: "Biblioteca Nationala a Romaniei"});
+
+db.imprumut.insertMany([
+{nume:"Ionescu", prenume:"Andrei", nr_tel: "0734324442", data_nasterii: new Date("May 20, 2002"), data_imprumut: new Date("Apr 20, 2023"), data_restituire: new Date("Jun 02, 2023"), carti: ["Romeo si Julieta", "Macbeth", "Patul lui Procust", "Hamlet", "Jocul ielelor", "Povestea lui Harap-Alb"], biblioteca: "Biblioteca Nationala a Romaniei"},
+{nume:"Constantin", prenume:"Cristina", nr_tel: "0756789123", data_nasterii: new Date("Feb 06, 2004"), data_imprumut: new Date("May 14, 2023"), data_restituire: new Date("Jun 02, 2023"), carti: ["Mostenitoarea Focului", "11/22/63", "1948", "Moara cu Noroc", "Tronul de clestar"], biblioteca: "Biblioteca Nationala a Romaniei"},
+{nume:"Mihai", prenume:"Alexandru", nr_tel: "0745123789", data_nasterii: new Date("12 20, 1995"), data_imprumut: new Date("May 15, 2023"), data_restituire: new Date("Jun 02, 2023"), carti: ["Tronul de clestar", "Instrumente mortale","Si soarele e o stea"], biblioteca: "Biblioteca Lucian Blaga"},
+{nume:"Gheorghe", prenume:"Elena", nr_tel: "0721330579", data_nasterii: new Date("Dec 15, 1988"), data_imprumut: new Date("Nov 24, 2023"), data_restituire: new Date("Jun 02, 2023"), carti: ["Furtuna", "Hamlet"], biblioteca: "Biblioteca Centrala Universitara"},
+{nume:"Popescu", prenume:"Ana", nr_tel: "0720930533", data_nasterii: new Date("May 19, 2002"), data_imprumut: new Date("Sep 16, 2023"), data_restituire: new Date("Oct 06, 2023"), carti: ["Furtuna", "Hamlet"], biblioteca: "Biblioteca Nationala a Romaniei"},
+{nume:"Georgescu", prenume:"Maria", nr_tel: "0733910455", data_nasterii: new Date("Mar 12, 2000"), data_imprumut: new Date("Apr 26, 2023"), data_restituire: new Date("May 03, 2023"), carti: ["Poesii", "Ferma animalelor"], biblioteca: "Biblioteca Nationala a Romaniei"},
+{nume:"Radu", prenume:"Mihnea", nr_tel: "0743922032", data_nasterii: new Date("Jun 25, 2001"), data_imprumut: new Date("Mar 13, 2023"), data_restituire: new Date("Jun 07, 2023"), carti: ["Fratii Karamazov", "Jocul ielelor", "Crima si Pedeapsa"], biblioteca: "Biblioteca Lucian Blaga"},
+{nume:"Stancu", prenume:"Cristian", nr_tel: "0734314343", data_nasterii: new Date("May 14, 1998"), data_imprumut: new Date("Jun 05, 2023"), data_restituire: new Date("Jul 06, 2023"), carti: ["Stapanul umbrelor"], biblioteca: "Biblioteca Judeteana Nicolae Iorga"},
+{nume:"Dumitrescu", prenume:"Andreea", nr_tel: "0755437695", data_nasterii: new Date("Sep 12, 1995"), data_imprumut: new Date("Jun 04, 2023"), data_restituire: new Date("Jun 14, 2023"), carti: ["Tronul de clestar", "Mostenitoarea focului"], biblioteca: "Biblioteca Centrala Universitara"},
+{nume:"Ciobanu", prenume:"Andrei", nr_tel: "0723826392", data_nasterii: new Date("Oct 06, 1987"), data_imprumut: new Date("Nov 02, 2023"), data_restituire: new Date("Dec 22, 2023"), carti: ["Taramul de cenusa", "Statia Perzaniei"], biblioteca: "Biblioteca Nationala a Romaniei"},
+{nume:"Sparda", prenume:"Vergil", nr_tel: "0749264927", data_nasterii: new Date("Nov 14, 1980"), data_imprumut: new Date("Sep 15, 2023"), data_restituire: new Date("Nov 03, 2023"), carti: ["Viseaza androizii oi electrice?", "Republica"], biblioteca: "Biblioteca Lucian Blaga"},
+]);
+
+
+
+db.imprumut.find() //afiseaza tot
+
+db.imprumut.find().sort({nume: 1}) // AFISEAZA TOT SORTAT, 1 PENTRU CRESCATOR -1 PENTRU DESCRESCATOR
+
+db.imprumut.find({nume: "Nae"}) // AFISEAZA VALOAREA CERUTA
+
+db.imprumut.find({nume: { $eq: "Ionescu"}}) // verifica daca numele este valoarea data eq=equal
+
+db.imprumut.find({nume: { $in: ["Ionesuc","Popescu"]}}) //verifica daca numele se afla in lista
+
+db.imprumut.find({ $and: [{nume:"Popescu"}, {prenume:"Ana"}]}) //Verifica mai multe conditii folosind and, daca numele e valoare si prenumele e valoare, merge si cu or
+
+db.imprumut.find({$expr: {$lt: ["$data_restituire","$data_imprumut"]}}) // Compara 2 atribute pentru fiecare coloana, nu are sens exemplul e doar un exemplu lt=less than
+
+db.imprumut.find({"carti":"Hamlet"}) // Cauta daca in vectorul de carti se afla cartea specificata
+
+db.imprumut.countDocuments({data_nasterii: { $gt: new Date("Jan 01, 2000")}}) //verifica cati sunt nascuti dupa data de 1 ianuarie 2000
+
+db.imprumut.updateMany({nume: "Gheorghe"}, { $set: {nr_tel: "0723255173"}}) // daca numele este gheorghe, modifica numarul de telefon, merge si cu updateOne, in rest orice comanda de insert merge si pe update
+
+db.imprumut.updateMany({},{$rename: {nr_tel: "numar_telefon"}}) // modifica numele unei coloane, in primele {} se poate pune si o conditie, daca in loc de rename este unset, se sterge coloana de tot
+
+db.imprumut.updateOne({nume: "Gheorghe"}, {$push: { carti: "Republica"}}) // Adauga in vectorul specificat, valoarea specificata
+
+db.imprumut.updateOne({nume: "Gheorghe"}, {$pull: { carti: "Republica"}}) // Sterge din vectorul specificat, valoarea specificata
+
+db.imprumut.deleteOne({nume:"Ciobanu"}) // Sterge linia in functie de conditie
